@@ -6,9 +6,10 @@
 
 public class Point {
 
-    private final int x;
-    private final int y;
-    private final boolean isOpen = false;
+    private int x;
+    private int y;
+    private int root = 0;
+    private boolean isOpen = false;
 
     public Point(int x, int y) {
         this.x = x;

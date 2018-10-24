@@ -6,26 +6,28 @@
 
 public class Percolation {
 
-    private int[][] id;
+    private Point[][] id;
 
     // create n-by-n grid, with all sites blocked
     public Percolation(int n) {
-        id = new int[n][n];
+        id = new Point[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                id[i][j] = i + j;
+                id[i][j] = new Point(i, j);
             }
         }
     }
 
     // open site (row, col) if it is not open already
     public void open(int row, int col) {
-
+        if (!isOpen(row, col)) {
+            id[row][col].open();
+        }
     }
 
     // is site (row, col) open?
     public boolean isOpen(int row, int col) {
-
+        return id[i][j].isOpen();
     }
 
     // is site (row, col) full?
@@ -36,7 +38,15 @@ public class Percolation {
 
     // number of open sites
     public int numberOfOpenSites() {
-
+        int openSites = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (isOpen(i, j)) {
+                    openSites++;
+                }
+            }
+        }
+        return openSites;
     }
 
     // does the system percolate?

@@ -6,14 +6,21 @@
 
 public class Percolation {
 
-    private Point[][] id;
+    private int[] id;
+    private int dimension;
+
+    private int map2Dto1D(int x, int y) {
+        return dimension * x + y;
+    }
 
     // create n-by-n grid, with all sites blocked
     public Percolation(int n) {
-        id = new Point[n][n];
+        this.dimension = n;
+        this.id = new int[n * n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                id[i][j] = new Point(i, j);
+                int flattened = map2Dto1D(i, j);
+                id[flattened] = flattened;
             }
         }
     }
@@ -27,7 +34,7 @@ public class Percolation {
 
     // is site (row, col) open?
     public boolean isOpen(int row, int col) {
-        return id[i][j].isOpen();
+        return id[row][col].isOpen();
     }
 
     // is site (row, col) full?

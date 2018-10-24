@@ -8,7 +8,6 @@ public class Point {
 
     private int x;
     private int y;
-    private int root = 0;
     private boolean isOpen = false;
 
     public Point(int x, int y) {
@@ -28,7 +27,7 @@ public class Point {
 
     }
 
-    public void union(Point x, Point y) {
+    public void union(Point p) {
 
     }
 

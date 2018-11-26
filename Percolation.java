@@ -14,26 +14,6 @@ public class Percolation {
     private int tail;
     private WeightedQuickUnionUF percoSystem;
 
-    // Map two dimension site to 1 dimension int, return -1 if out of bound
-    // This also benefit bound check when calculating other sites next to current site
-    private int map2Dto1D(int x, int y) {
-        try {
-            checkBounds(x, y);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-        return dimension * (x - 1) + y - 1;
-    }
-
-    // check if given index out of bound
-    private void checkBounds(int x, int y) {
-        if (x < 1 || y < 1 || x > dimension || y > dimension) {
-            throw new IndexOutOfBoundsException();
-        }
-    }
-
     // create n-by-n grid, with all sites blocked
     public Percolation(int n) {
         if (n <= 0) {
@@ -46,6 +26,26 @@ public class Percolation {
         percoSystem = new WeightedQuickUnionUF(n * n + 2);
         for (int i = 0; i < openPoint.length; i++) {
             openPoint[i] = false;
+        }
+    }
+
+    // Map two dimension site to 1 dimension int, return -1 if out of bound
+    // This also benefit bound check when calculating other sites next to current site
+    private int map2Dto1D(int x, int y) {
+        try {
+            checkBounds(x, y);
+        }
+        catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            return -1;
+        }
+        return dimension * (x - 1) + y - 1;
+    }
+
+    // check if given index out of bound
+    private void checkBounds(int x, int y) {
+        if (x < 1 || y < 1 || x > dimension || y > dimension) {
+            throw new IndexOutOfBoundsException();
         }
     }
 
@@ -71,7 +71,7 @@ public class Percolation {
 
     // Use mapped dimension to check if site open
     private boolean isSiteOpen(int site) {
-        return site > 0 && site < openPoint.length && openPoint[site];
+        return site >= 0 && site < openPoint.length && openPoint[site];
     }
 
     // open site (row, col) if it is not open already
@@ -91,10 +91,12 @@ public class Percolation {
             if (isSiteOpen(bottom(row, col))) {
                 percoSystem.union(site, bottom(row, col));
             }
+            // The open site in first row connect with head automatically
             if (row == 1) {
                 percoSystem.union(site, head);
             }
-            if (row == dimension - 1) {
+            // The open site in last row connect with tail automatically
+            if (row == dimension) {
                 percoSystem.union(site, tail);
             }
         }
@@ -102,13 +104,12 @@ public class Percolation {
 
     // is site (row, col) open?
     public boolean isOpen(int row, int col) {
-        checkBounds(row, col);
         int index = map2Dto1D(row, col);
         return openPoint[index];
     }
 
 
-    // is site (row, col) full?
+    // is site (row, col) full (connect to top row)?
     public boolean isFull(int row, int col) {
         return percoSystem.connected(head, map2Dto1D(row, col));
     }
@@ -117,8 +118,8 @@ public class Percolation {
     // number of open sites
     public int numberOfOpenSites() {
         int openSites = 0;
-        for (int i = 0; i < dimension; i++) {
-            for (int j = 0; j < dimension; j++) {
+        for (int i = 1; i <= dimension; i++) {
+            for (int j = 1; j <= dimension; j++) {
                 if (isOpen(i, j)) {
                     openSites++;
                 }

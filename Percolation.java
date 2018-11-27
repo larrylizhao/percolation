@@ -36,7 +36,7 @@ public class Percolation {
             checkBounds(x, y);
         }
         catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
+            // Bypass checked exception and return -1 to indicate boundaries
             return -1;
         }
         return dimension * (x - 1) + y - 1;

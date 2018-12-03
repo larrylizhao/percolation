@@ -10,21 +10,35 @@ import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats {
 
+    private static final double FACTOR = 1.96;
     private int dimension;
-    private int totalGrid;
     private int repeat;
-    private Percolation perc;
-    private static double FACTOR = 1.96;
+    private double[] percoRates;
+
 
     // perform trials independent experiments on an n-by-n grid
-    public PercolationStats(int n, int trials) {
-        if (n <= 0 || trials <= 0) {
+    public PercolationStats(int n, int t) {
+        if (n <= 0 || t <= 0) {
             throw new IllegalArgumentException();
         }
         this.dimension = n;
-        this.repeat = trials;
-        this.totalGrid = n * n;
-        perc = new Percolation(n);
+        this.repeat = t;
+        int totalGrid = n * n;
+        Percolation perc = new Percolation(n);
+
+        percoRates = new double[repeat];
+        for (int i = 0; i < repeat; i++) {
+            int opened = 0;
+            while (!perc.percolates()) {
+                int x = chooseX();
+                int y = chooseY();
+                if (!perc.isOpen(x, y)) {
+                    perc.open(x, y);
+                    opened++;
+                }
+            }
+            percoRates[i] = (double) opened / totalGrid;
+        }
     }
 
     private int chooseX() {
@@ -37,38 +51,12 @@ public class PercolationStats {
 
     // sample mean of percolation threshold
     public double mean() {
-        double fraction[] = new double[repeat];
-        for (int i = 0; i < repeat; i++) {
-            int opened = 0;
-            while (!perc.percolates()) {
-                int x = chooseX();
-                int y = chooseY();
-                if (!perc.isOpen(x, y)) {
-                    perc.open(x, y);
-                    opened++;
-                }
-            }
-            fraction[i] = (double) opened / totalGrid;
-        }
-        return StdStats.mean(fraction);
+        return StdStats.mean(percoRates);
     }
 
     // sample standard deviation of percolation threshold
     public double stddev() {
-        double fraction[] = new double[repeat];
-        for (int i = 0; i < repeat; i++) {
-            int opened = 0;
-            while (!perc.percolates()) {
-                int x = chooseX();
-                int y = chooseY();
-                if (!perc.isOpen(x, y)) {
-                    perc.open(x, y);
-                    opened++;
-                }
-            }
-            fraction[i] = (double) opened / totalGrid;
-        }
-        return StdStats.stddev(fraction);
+        return StdStats.stddev(percoRates);
     }
 
     // low  endpoint of 95% confidence interval
@@ -86,8 +74,8 @@ public class PercolationStats {
         int n = Integer.parseInt(args[0]);
         int t = Integer.parseInt(args[1]);
         PercolationStats percoStats = new PercolationStats(n, t);
-        StdOut.printf("mean                    = %f", percoStats.mean());
-        StdOut.printf("stddev                  = %f", percoStats.stddev());
+        StdOut.printf("mean                    = %f\n", percoStats.mean());
+        StdOut.printf("stddev                  = %f\n", percoStats.stddev());
         StdOut.printf("95% confidence interval = [%f, %f]", percoStats.confidenceLo(),
                       percoStats.confidenceHi());
 

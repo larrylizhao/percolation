@@ -9,9 +9,10 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
 
     private boolean[] openPoint;
-    private int dimension;
-    private int head;
-    private int tail;
+    private final int dimension;
+    private final int head;
+    private final int tail;
+    private int openSites;
     private WeightedQuickUnionUF percoSystem;
 
     // create n-by-n grid, with all sites blocked
@@ -22,6 +23,7 @@ public class Percolation {
         this.dimension = n;
         this.head = n * n;
         this.tail = n * n + 1;
+        this.openSites = 0;
         openPoint = new boolean[n * n];
         percoSystem = new WeightedQuickUnionUF(n * n + 2);
         for (int i = 0; i < openPoint.length; i++) {
@@ -35,7 +37,7 @@ public class Percolation {
         try {
             checkBounds(x, y);
         }
-        catch (IndexOutOfBoundsException e) {
+        catch (IllegalArgumentException e) {
             // Bypass checked exception and return -1 to indicate boundaries
             return -1;
         }
@@ -45,7 +47,7 @@ public class Percolation {
     // check if given index out of bound
     private void checkBounds(int x, int y) {
         if (x < 1 || y < 1 || x > dimension || y > dimension) {
-            throw new IndexOutOfBoundsException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -74,11 +76,16 @@ public class Percolation {
         return site >= 0 && site < openPoint.length && openPoint[site];
     }
 
+    private void markOpen(int site) {
+        openPoint[site] = true;
+        openSites++;
+    }
+
     // open site (row, col) if it is not open already
     public void open(int row, int col) {
         if (!isOpen(row, col)) {
             int site = map2Dto1D(row, col);
-            openPoint[site] = true;
+            markOpen(site);
             if (isSiteOpen(left(row, col))) {
                 percoSystem.union(site, left(row, col));
             }
@@ -117,14 +124,6 @@ public class Percolation {
 
     // number of open sites
     public int numberOfOpenSites() {
-        int openSites = 0;
-        for (int i = 1; i <= dimension; i++) {
-            for (int j = 1; j <= dimension; j++) {
-                if (isOpen(i, j)) {
-                    openSites++;
-                }
-            }
-        }
         return openSites;
     }
 

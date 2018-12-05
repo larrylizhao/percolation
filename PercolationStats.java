@@ -24,10 +24,10 @@ public class PercolationStats {
         this.dimension = n;
         this.repeat = t;
         int totalGrid = n * n;
-        Percolation perc = new Percolation(n);
 
         double[] percoRates = new double[repeat];
         for (int i = 0; i < repeat; i++) {
+            Percolation perc = new Percolation(n);
             int opened = 0;
             while (!perc.percolates()) {
                 int x = chooseX();

@@ -4,6 +4,7 @@
  *  Description: This is a percolation class that simulate the percolation system
  **************************************************************************** */
 
+
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
@@ -13,7 +14,7 @@ public class Percolation {
     private final int head;
     private final int tail;
     private int openSites;
-    private WeightedQuickUnionUF percoSystem;
+    private final WeightedQuickUnionUF percoSystem;
 
     // create n-by-n grid, with all sites blocked
     public Percolation(int n) {
@@ -112,7 +113,7 @@ public class Percolation {
     // is site (row, col) open?
     public boolean isOpen(int row, int col) {
         int index = map2Dto1D(row, col);
-        return openPoint[index];
+        return isSiteOpen(index);
     }
 
 
@@ -120,7 +121,6 @@ public class Percolation {
     public boolean isFull(int row, int col) {
         return percoSystem.connected(head, map2Dto1D(row, col));
     }
-
 
     // number of open sites
     public int numberOfOpenSites() {
@@ -132,7 +132,12 @@ public class Percolation {
         return percoSystem.connected(head, tail);
     }
 
+    // the main is empty as intended
     public static void main(String[] args) {
 
     }
 }
+
+
+
+
